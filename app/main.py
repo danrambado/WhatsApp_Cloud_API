@@ -1,19 +1,18 @@
-from time import sleep
+#Python
 import requests
 import json
-
+#Pydantic
 from pydantic import BaseModel
-
+#FastAPI
 from fastapi import FastAPI, HTTPException, Request, Response, Body
 from fastapi.responses import JSONResponse
 
 
-# open the json with the configuration parameters
+#Open the json configuration parameters
 with open('config.json') as f:
     config = json.load(f)
 
 app = FastAPI()
-
 
 @app.get("/")
 def hello_world():
@@ -90,20 +89,3 @@ async def handle_webhooks(request: Request):
     return {"message": "200 OK HTTPS"}
 
 
-    # field = data.get("field")
-    # value = data.get("value")
-    
-    # if field == "messages":
-    #     messaging_product = value.get("messaging_product")
-    #     metadata = value.get("metadata")
-    #     contacts = value.get("contacts")
-    #     messages = value.get("messages")
-
-    #     # Do something with the received data
-
-    #     with open('readme.txt', 'w') as f:
-    #         f.write(contacts)
-    #         f.write(messages)
-
-    #     return {"status": "success"}
-    # return {"error": "Invalid field"}
