@@ -6,7 +6,9 @@ class pacient_info(BaseModel):
     date: str
     time: str
 
-
+class simple_message(BaseModel):
+    number: str 
+    text: str
 
 
 class MessageBase(BaseModel):

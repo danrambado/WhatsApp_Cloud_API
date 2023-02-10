@@ -32,19 +32,22 @@ def hello_world():
     return "Hello World!"
 
 #Endpoint to send messages.
-@app.post("/send_messagse/")
-async def send_message(message: Union[models.TextMessage, models.InteractiveMessage]):
-    data = message.dict()
+@app.post("/send_simple_message")
+async def send_simple_message(message: models.simple_message):
 
-    if message.type == "text":
-        response = requests.post(api_url, headers=headers, json=data)
-    elif message.type == "interactive":
-        response = requests.post(api_url, headers=headers, json=data)
+    data = {
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": message.number,
+    "type": "text",
+    "text": { 
+        "preview_url": False,
+        "body": message.text
+    }
+    }
+    response = requests.post(api_url, headers=headers, json=data)
 
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail=response.json())
-
-    return {"message": "Message sent successfully"}
+    return response.json()
 
 
 @app.get("/webhook/")
@@ -60,11 +63,48 @@ async def handle_webhooks(request: Request):
 
     print(await request.json())
     res = await request.json()
-    try:
-        if res['entry'][0]['changes'][0]['value']['messages'][0]['id']:
-            pass
-    except:
-        pass
+
+    
+
+    if "contacts" in res["entry"][0]["changes"][0]["value"]:
+
+        number = res['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
+        status = res["entry"][0]["changes"][0]["value"]["messages"][0]["interactive"]["button_reply"]["title"]
+
+        number = number[:2] + number[3:]
+        try:
+            if status == 'Confirmar turno':
+                data = {
+                        "number": number,
+                        "text": "Gracias por confirmar su turno."
+                    }
+                message = models.simple_message(**data)
+            
+                a = await send_simple_message(message)
+
+            elif status == "Cancelar turno":
+                data = {
+                        "number": number,
+                        "text": "Lamentamos que no pueda asistir. Ante cualquier duda, contactenos"
+                    }
+                message = models.simple_message(**data)
+            
+                a = await send_simple_message(message)
+
+            elif status == "Reprogramar turno":
+                data = {
+                        "number": number,
+                        "text": "Nos contactaremos a la brevedad para reprogramar su turno"
+                    }
+                message = models.simple_message(**data)
+            
+                a = await send_simple_message(message)
+
+
+
+        
+        except:
+            print("algo anda mal")
     
     return {"message": "200 OK HTTPS"}
 
