@@ -2,18 +2,11 @@
 from typing import Optional, List
 
 # Pydantic
-from pydantic import BaseModel, constr, validator
-
+from pydantic import BaseModel
 
 class simple_message(BaseModel):
     to: int 
     body: str
-
-class buttons(BaseModel):
-    button1: str = None
-    button2: Optional[str] = None
-    button3: Optional[str] = None
-
 
 class button_message(BaseModel):
     to: int

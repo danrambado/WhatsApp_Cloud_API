@@ -1,11 +1,9 @@
-# Here are the templates of the messages to be sent 
+"""
+Json data templates to send a message according to the WhatsApp Business Platform Cloud API 
+documentation (https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages)
+"""
 
-
-# The json data to send message must have the following structure according to 
-# the WhatsApp Business Platform Cloud API documentation (https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages)
-# None values are to be considered variables that need to be filled in when using the template.
-
-from typing import List, Dict, Any
+from typing import Dict, Any
 
 class BaseMessage:
     """Base class for WhatsApp messages"""
@@ -32,7 +30,7 @@ class BaseMessage:
         }
     
 class SimpleMessage(BaseMessage):
-    """Class for simple text messages"""
+    """Class for simple WhatsApp text messages"""
     def __init__(self, to, body):
         """
         Parameters:
@@ -56,7 +54,7 @@ class SimpleMessage(BaseMessage):
         return message
 
 class InteractiveButtonMessage(BaseMessage):
-    """Class for interactive messages with buttons"""
+    """Class for WhatsApp interactive messages with buttons"""
 
     def __init__(self, to: int, header_text: str, body_text: str, footer_text: str, reply_buttons: Dict[str, str]):
         """
