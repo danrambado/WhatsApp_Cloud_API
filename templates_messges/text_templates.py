@@ -39,12 +39,13 @@ class ButtonMessages:
 
     def confirmation_message(self, date, time) -> dict:
         return {
+            "to": self.to,
             "header_text": "Confirmación de turno | Cardiologia",
             "body_text": f"Estimado/a paciente es un placer confirmar su turno médico programado para el día *{date}* a las *{time}hs*. Le recomendamos llegar con 10 minutos de anticipación. Este mensaje es para confirmar su asistencia. Por favor, háganos saber si necesita cancelar o reprogramar su turno.",
             "footer_text": "IAF | Instituto Alexander Fleming",
             "reply_buttons": {
                 "button_1": "Confirmar turno",
                 "button_2": "Cancelar turno",
-                "button_3":"Reprogramar turno"
+                "button_3": "Reprogramar turno"
             }
         }

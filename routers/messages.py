@@ -9,11 +9,8 @@ from fastapi import APIRouter, HTTPException
 from schemas import schema
 from templates_messges import json_templates
 
-
-
-
 #Open the json configuration parameters
-with open('config.json') as f:
+with open('config/config.json') as f:
     config = json.load(f)
 
 #Define the config parameters that will be used.
@@ -25,7 +22,7 @@ verify_token = config["VERIFY_TOKEN"]
 """
 API router to send messages
 """
-messages_router = APIRouter
+messages_router = APIRouter()
 
 #Endpoint to send a simple messages.
 @messages_router.post("/simple_message")
