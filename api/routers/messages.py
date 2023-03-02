@@ -10,7 +10,7 @@ from schemas import schema
 from templates_messges import json_templates
 
 #Open the json configuration parameters
-with open('config/config.json') as f:
+with open('app/config/config.json') as f:
     config = json.load(f)
 
 #Define the config parameters that will be used.

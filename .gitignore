@@ -1,7 +1,5 @@
 ### Config Files ###
-API/config/config.json
-mi_archivo2.json
-mi_archivo.json
+api/config/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

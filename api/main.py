@@ -5,8 +5,6 @@
 from fastapi import FastAPI, Request
 
 #env
-from schemas import schema
-from templates_messges import json_templates
 from routers.messages import messages_router
 from routers.webhook import webhook_router
 

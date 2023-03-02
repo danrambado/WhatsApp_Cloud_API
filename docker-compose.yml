@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  api:
+    image: api
+    container_name: wpp_api
+    build:
+      context: ./api
+      target: build
+    ports:
+      - "8000:8000"
+    command: uvicorn app.main:app --host 0.0.0.0 --reload
+    depends_on:
+      - postgres
+    volumes:
+      - ./.env:/src/app/config/.env
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    ports:
+      - '6500:5432'
+    restart: always
+    env_file:
+      - ./.env
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+volumes:
+  postgres-db:
