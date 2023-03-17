@@ -3,7 +3,7 @@ version: '3.9'
 services:
   api:
     image: api
-    container_name: wpp_api
+    container_name: api
     build:
       context: ./api
       target: build
@@ -25,5 +25,19 @@ services:
       - ./.env
     volumes:
       - postgres-db:/var/lib/postgresql/data
+
+  dashboard:
+    build: ./dashboard
+    image: dashboard
+    container_name: dashboard
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./dashboard/dashboard:/app/
+  
+  # redis:
+  #   image: redis
+  #   container_name: redis
+
 volumes:
   postgres-db:

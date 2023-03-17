@@ -3,22 +3,52 @@
 
 #FastAPI
 from fastapi import FastAPI, Request
-
+from fastapi.middleware.cors import CORSMiddleware
 #env
-from routers.messages import messages_router
-from routers.webhook import webhook_router
+# from routers.messages import messages_router
+# from routers.webhook import webhook_router
+# from database import SessionLocal, engine, Base
+# from models.models import Patient, Doctor, Appointment
 
+# Base.metadata.create_all(bind=engine)
 
 
 #Create the FastAPI app.
 app = FastAPI()
-app.include_router(messages_router)
-app.include_router(webhook_router)
+# app.include_router(messages_router)
+# app.include_router(webhook_router)
 
+
+# # Dependency
+# def get_db():
+#     db = SessionLocal()
+#     try:
+#         yield db
+#     finally:
+#         db.close()
 
 @app.get("/")
 def start():
     return "Welcome to the API of automatic replies in WhatsApp"
+
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite cualquier origen
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos los métodos
+    allow_headers=["*"],  # Permite todas las cabeceras
+)
+
+@app.get("/appointments")
+def get_appointments():
+    return [
+        {
+            "fecha": "2023-03-17",
+            "nombre": "Juan"
+        }
+    ]
 
 
 # @app.post("/webhook/")

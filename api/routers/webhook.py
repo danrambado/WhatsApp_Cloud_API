@@ -6,7 +6,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 #Open the json configuration parameters
-with open('app/config/config.json') as f:
+with open('api/config/config.json') as f:
     config = json.load(f)
 
 #Define the config parameters that will be used.

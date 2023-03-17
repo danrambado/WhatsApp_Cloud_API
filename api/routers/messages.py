@@ -6,11 +6,12 @@ import json
 from fastapi import APIRouter, HTTPException
 
 #env 
-from schemas import schema
+from schemas import messages
 from templates_messges import json_templates
 
 #Open the json configuration parameters
-with open('app/config/config.json') as f:
+
+with open('api/config/config.json') as f:
     config = json.load(f)
 
 #Define the config parameters that will be used.
@@ -26,7 +27,7 @@ messages_router = APIRouter()
 
 #Endpoint to send a simple messages.
 @messages_router.post("/simple_message")
-async def send_simple_message(message: schema.simple_message):
+async def send_simple_message(message: messages.simple_message):
 
     """
     Create a intance of the class SimpleMessage to create the structure of the json_response for a simple menssage.
@@ -55,7 +56,7 @@ async def send_simple_message(message: schema.simple_message):
 
 
 @messages_router.post("/interactive_button_message")
-async def send_interactive_button_message(message: schema.button_message):
+async def send_interactive_button_message(message: messages.button_message):
 
     """
     Create a intance of the class InteractiveButtonMessage to create the structure of the json_response for a simple menssage.
