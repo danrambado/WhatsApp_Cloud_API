@@ -5,12 +5,11 @@ import json
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
-#Open the json configuration parameters
-with open('api/config/config.json') as f:
-    config = json.load(f)
+#env
+from config.config import whatsappcloudapi
 
 #Define the config parameters that will be used.
-verify_token = config["VERIFY_TOKEN"]
+verify_token = whatsappcloudapi.VERIFY_TOKEN
 
 """
 API router to handle the WhatsApp webhook 
@@ -33,7 +32,7 @@ async def verify_token_webhook(request: Request):
     """
 
     if request.method == "GET":
-        if request.query_params.get('hub.verify_token') == config["VERIFY_TOKEN"]:
+        if request.query_params.get('hub.verify_token') == verify_token:
             return int(request.query_params.get('hub.challenge'))
         return JSONResponse(content={"error": "Authentication failed. Invalid Token."}, status_code=400)
 

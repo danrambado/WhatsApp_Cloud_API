@@ -10,10 +10,41 @@ services:
     ports:
       - "8000:8000"
     command: uvicorn app.main:app --host 0.0.0.0 --reload
+    # alembic upgrade head && 
     depends_on:
       - postgres
     volumes:
       - ./.env:/src/app/config/.env
+      - ./api:/src/app
+
+  # celery_worker:
+  #   image: api
+  #   container_name: celery_worker
+  #   build:
+  #     context: ./api
+  #     target: build
+  #   command: celery -A app.celery_task.celery:celery_app worker --loglevel=info
+  #   depends_on:
+  #     - api
+  #     - redis
+  #   volumes:
+  #     - ./.env:/src/app/config/.env
+  #     - ./api:/src/app
+      
+  # celery_beat:
+  #   image: api
+  #   container_name: celery_beat
+  #   build:
+  #     context: ./api
+  #     target: build
+  #   command: celery -A app.celery_task.celery:celery_app beat --loglevel=info --scheduler celery.beat.PersistentScheduler -s /celerybeat-schedule
+
+  #   depends_on:
+  #     - api
+  #     - redis
+  #   volumes:
+  #     - ./.env:/src/app/config/.env
+  #     - ./api:/src/app
 
   postgres:
     image: postgres
@@ -33,11 +64,13 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - ./dashboard/dashboard:/app/
+      - ./dashboard:/app/
   
-  # redis:
-  #   image: redis
-  #   container_name: redis
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - '6379:6379'
 
 volumes:
   postgres-db:

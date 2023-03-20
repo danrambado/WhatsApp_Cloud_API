@@ -10,9 +10,9 @@
 # Dev stage
 FROM node:alpine as dev
 WORKDIR /app
-COPY ./dashboard/package.json ./dashboard/package-lock.json ./
+COPY package.json package-lock.json ./
 RUN npm install
-COPY ./dashboard ./
+COPY . .
 EXPOSE 3000
 CMD ["npm", "run", "dev"]
 

@@ -5,20 +5,15 @@ import json
 #FastAPI
 from fastapi import APIRouter, HTTPException
 
-#env 
+#env
+from config.config import whatsappcloudapi 
 from schemas import messages
 from templates_messges import json_templates
 
-#Open the json configuration parameters
-
-with open('api/config/config.json') as f:
-    config = json.load(f)
-
 #Define the config parameters that will be used.
-api_url = config["API_URL"]
-acces_token = config["ACCESS_TOKEN"]
+api_url = whatsappcloudapi.API_URL
+acces_token = whatsappcloudapi.ACCESS_TOKEN
 headers = {'Authorization': f'Bearer {acces_token}'}
-verify_token = config["VERIFY_TOKEN"]
 
 """
 API router to send messages

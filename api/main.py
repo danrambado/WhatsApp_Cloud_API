@@ -1,45 +1,44 @@
 #Python
-
-
+import asyncio
 #FastAPI
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Depends, Request, HTTPException
+
 #env
-# from routers.messages import messages_router
-# from routers.webhook import webhook_router
-# from database import SessionLocal, engine, Base
-# from models.models import Patient, Doctor, Appointment
+from services import redis_state
+from services.redis_utils import get_redis_pool, close_redis_pool
 
-# Base.metadata.create_all(bind=engine)
+# routers
+from routers.messages import messages_router
+from routers.webhook import webhook_router
+from routers.get_data_iaf import get_data_iaf_router
+from routers.db_manage import db_manage_router
 
 
-#Create the FastAPI app.
+#Create the FastAPI app and ad the routers
 app = FastAPI()
-# app.include_router(messages_router)
-# app.include_router(webhook_router)
+app.include_router(messages_router)
+app.include_router(webhook_router)
+app.include_router(get_data_iaf_router)
+app.include_router(db_manage_router)
 
 
-# # Dependency
-# def get_db():
-#     db = SessionLocal()
-#     try:
-#         yield db
-#     finally:
-#         db.close()
+@app.on_event("startup")
+async def on_startup():
+    redis_state.redis_pool = await get_redis_pool()
 
+@app.on_event("shutdown")
+async def on_shutdown():
+    await close_redis_pool(redis_state.redis_pool)
+
+@app.on_event("shutdown")
+async def on_shutdown():
+    await close_redis_pool(redis_state.redis_pool)
+
+
+# Endpoints
 @app.get("/")
 def start():
     return "Welcome to the API of automatic replies in WhatsApp"
-
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Permite cualquier origen
-    allow_credentials=True,
-    allow_methods=["*"],  # Permite todos los métodos
-    allow_headers=["*"],  # Permite todas las cabeceras
-)
 
 @app.get("/appointments")
 def get_appointments():
@@ -49,6 +48,17 @@ def get_appointments():
             "nombre": "Juan"
         }
     ]
+
+
+
+# @app.post("/test_create_appoinmetn")
+# def test(appoinment: database.appoinmentTEST, db: Session = Depends(get_db)):
+#     return crud_utils.create_appointment(db=db, appoinment=appoinment)
+    
+    
+
+
+
 
 
 # @app.post("/webhook/")
