@@ -7,19 +7,24 @@ import React from 'react';
 import Head from 'next/head';
 import { MdCheckCircle, MdList, MdAccessTime } from 'react-icons/md';
 import Sidebar from '@/components/Sidebar';
+import Link from 'next/link';
+import { Button } from 'antd';
 
 
 const Home = () => {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 via-iafpink to-blue-500 animate-gradient-move">
           <Sidebar />
+       
           <div className="text-center">
             <h1 className="text-8xl font-bold mb-12 text-white">Dashboard</h1>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              < Link href="/appointment_confirmation">
               <button className="group bg-white p-6 rounded-lg shadow-md flex flex-col items-center space-y-4 transition duration-300 hover:bg-gray-100">
                 <MdCheckCircle className="h-24 w-24 text-iafpink transform transition duration-500 group-hover:scale-125 group-hover:text-blue-500" />
                 <span className="text-2xl font-semibold text-iafpink transition duration-500 group-hover:text-blue-500">Confirmación de turnos</span>
               </button>
+              </Link>
               <button className="group bg-white p-6 rounded-lg shadow-md flex flex-col items-center space-y-4 transition duration-300 hover:bg-gray-100">
                 <MdList className="h-24 w-24 text-iafpink transform transition duration-500 group-hover:scale-125 group-hover:text-blue-500" />
                 <span className="text-2xl font-semibold text-iafpink transition duration-500 group-hover:text-blue-500">Cuestionarios</span>

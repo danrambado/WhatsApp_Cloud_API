@@ -10,41 +10,14 @@ services:
     ports:
       - "8000:8000"
     command: uvicorn app.main:app --host 0.0.0.0 --reload
-    # alembic upgrade head && 
     depends_on:
       - postgres
+    environment:
+      - APP_ENV=prod
     volumes:
-      - ./.env:/src/app/config/.env
+      - ./config/.env.dev:/src/app/config/.env.dev
+      - ./config/.env.prod:/src/app/config/.env.prod
       - ./api:/src/app
-
-  # celery_worker:
-  #   image: api
-  #   container_name: celery_worker
-  #   build:
-  #     context: ./api
-  #     target: build
-  #   command: celery -A app.celery_task.celery:celery_app worker --loglevel=info
-  #   depends_on:
-  #     - api
-  #     - redis
-  #   volumes:
-  #     - ./.env:/src/app/config/.env
-  #     - ./api:/src/app
-      
-  # celery_beat:
-  #   image: api
-  #   container_name: celery_beat
-  #   build:
-  #     context: ./api
-  #     target: build
-  #   command: celery -A app.celery_task.celery:celery_app beat --loglevel=info --scheduler celery.beat.PersistentScheduler -s /celerybeat-schedule
-
-  #   depends_on:
-  #     - api
-  #     - redis
-  #   volumes:
-  #     - ./.env:/src/app/config/.env
-  #     - ./api:/src/app
 
   postgres:
     image: postgres
@@ -52,9 +25,11 @@ services:
     ports:
       - '6500:5432'
     restart: always
-    env_file:
-      - ./.env
+    environment:
+      - APP_ENV=prod
     volumes:
+      - ./config/.env.dev:/src/app/config/.env.dev
+      - ./config/.env.prod:/src/app/config/.env.prod
       - postgres-db:/var/lib/postgresql/data
 
   dashboard:

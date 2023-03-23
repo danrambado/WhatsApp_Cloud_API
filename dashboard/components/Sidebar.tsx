@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { MdMenu, MdClose, MdCheckCircle, MdList, MdAccessTime } from "react-icons/md";
+import Link from 'next/link';
+
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,19 +39,21 @@ const Sidebar = () => {
             <div className="text-center pt-8">
               <h1 className="text-4xl font-bold mb-6 text-iafpink">Menu</h1>
               <div className="grid grid-cols-1 gap-4">
+                < Link href="/appointment_confirmation">
                 <button className="group bg-white p-6 rounded-lg shadow-md flex flex-col items-center space-y-4 transition duration-300 hover:bg-gray-100">
-                  <MdCheckCircle className="h-10 w-10 text-iafpink transform transition duration-500 group-hover:scale-125 group-hover:text-blue-500" />
+                  <MdCheckCircle className="h-8 w-8 text-iafpink transform transition duration-500 group-hover:scale-125 group-hover:text-blue-500" />
                   <span className="text-x font-semibold text-iafpink transition duration-500 group-hover:text-blue-500">
                     Confirmación de turnos
                   </span>
                 </button>
+                </Link>
                 <button className="group bg-white p-6 rounded-lg shadow-md flex flex-col items-center space-y-4 transition duration-300 hover:bg-gray-100">
-                  <MdList className="h-24 w-24 text-iafpink transform transition duration-500 group-hover:scale-125 group-hover:text-blue-500" />
-                  <span className="text-2xl font-semibold text-iafpink transition duration-500 group-hover:text-blue-500">Cuestionarios</span>
+                  <MdList className="h-8 w-8 text-iafpink transform transition duration-500 group-hover:scale-125 group-hover:text-blue-500" />
+                  <span className="text-x font-semibold text-iafpink transition duration-500 group-hover:text-blue-500">Cuestionarios</span>
                 </button>
                 <button className="group bg-white p-6 rounded-lg shadow-md flex flex-col items-center space-y-4 transition duration-300 hover:bg-gray-100">
-                  <MdAccessTime className="h-24 w-24 text-iafpink transform transition duration-500 group-hover:scale-125 group-hover:text-blue-500" />
-                  <span className="text-2xl font-semibold text-iafpink transition duration-500 group-hover:text-blue-500">Lista de espera</span>
+                  <MdAccessTime className="h-8 w-8 text-iafpink transform transition duration-500 group-hover:scale-125 group-hover:text-blue-500" />
+                  <span className="text-x font-semibold text-iafpink transition duration-500 group-hover:text-blue-500">Lista de espera</span>
                 </button>
               </div>
             </div>

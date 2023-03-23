@@ -1,25 +1,39 @@
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Button } from 'antd';
 import Sidebar from '../components/Sidebar';
+import _ from 'lodash';
 
 interface TableDataItem {
-    fecha: string;
-    nombre: string;
-  }
+  date_only: string;
+  time_only: string;
+  last_name: string;
+  first_name: string;
+  status: string;
+}
 
 const TablePage = () => {
-    const [tableData, setTableData] = useState<TableDataItem[]>([]);
+  const [tableData, setTableData] = useState<TableDataItem[]>([]);
+  const [sortBy, setSortBy] = useState<keyof TableDataItem>('time_only');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     const fetchData = async () => {
-        try {
-          const response = await fetch('http://host.docker.internal:8000/appointments');
-          const data = await response.json();
-          console.log('Data fetched:', data);
-          setTableData(data); // Cambia esto para asignar directamente la respuesta JSON
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
+      try {
+        const response = await fetch('http://localhost:8000/get_filtered_appointments');
+        const data = await response.json();
+        console.log('Data fetched:', data);
+        setTableData(data.map((item: any) => ({
+          date_only: item.date_only,
+          time_only: item.time_only,
+          last_name: item.last_name,
+          first_name: item.first_name,
+          status: "Estado" // Aquí puedes asignar un valor por defecto si no vienen en la respuesta del endpoint
+        })));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
     fetchData();
     const intervalId = setInterval(() => {
@@ -29,28 +43,60 @@ const TablePage = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  const sortedData = _.orderBy(tableData, [sortBy], [sortOrder]);
+
+  const handleClick = () => {
+    if (sortOrder === 'asc') {
+      setSortOrder('desc');
+    } else {
+      setSortOrder('asc');
+    }
+  };
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-r from-blue-500 via-iafpink to-blue-500 animate-gradient-move">
       <Sidebar />
+
       <div className="container mx-auto p-8">
-        <h1 className="text-4xl font-bold mb-6 text-white">Tabla de ejemplo</h1>
-        <div className="bg-white p-4 rounded-md shadow-md">
+        <h1 className="text-4xl font-bold mb-6 text-white">Confirmaciones</h1>
+        <Link href="/">
+        <Button type="primary" className="bg-white text-iafpink">Ir al Menu</Button>
+        </Link>
+
+        <div className="bg-white p-4 rounded-md shadow-md mt-4">
           <table className="w-full">
-          <thead>
-            <tr>
-                <th className="border px-4 py-2">Fecha</th>
-                <th className="border px-4 py-2">Nombre</th>
-            </tr>
+            <thead>
+              <tr>
+              <th className="border px-4 py-2" onClick={handleClick}>
+                Fecha
+              </th>
+              <th className="border px-4 py-2" onClick={handleClick}>
+                  Hora
+              </th>
+              <th className="border px-4 py-2" onClick={handleClick}>
+                    Nombre
+              </th>
+              <th className="border px-4 py-2" onClick={handleClick}>
+                  Apellido
+              </th>
+              <th className="border px-4 py-2" onClick={handleClick}>
+                Estado
+              </th>
+              </tr>
             </thead>
             <tbody>
-            {tableData.map((row, index) => (
+              {sortedData.map((row, index) => (
                 <tr key={index} className={`${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
-                <td className="border px-4 py-2">{row.fecha}</td>
-                <td className="border px-4 py-2">{row.nombre}</td>
+                  <td className="border px-4 py-2">{row.date_only}</td>
+                  <td className="border px-4 py-2">{row.time_only}</td>
+                  <td className="border px-4 py-2">{row.first_name}</td>
+                  <td className="border px-4 py-2">{row.last_name}</td>
+                  <td className="border px-4 py-2">{row.status}</td>
                 </tr>
-            ))}
+              ))}
             </tbody>
           </table>
+          <div className="mt-4"></div>
         </div>
       </div>
     </div>

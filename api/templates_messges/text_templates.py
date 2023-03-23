@@ -41,7 +41,7 @@ class ButtonMessages:
         return {
             "to": self.to,
             "header_text": "Confirmación de turno | Cardiología",
-            "body_text": f"Estimado/a paciente este mensaje _automático_un es para confirmar su turno médico programado para el día *{date}* a las *{time}hs*. Le recomendamos llegar con 10 minutos de anticipación. Por favor seleccione la opcion deseada.",
+            "body_text": f"Estimado/a paciente este mensaje _automático_ un es para confirmar su turno médico programado para el día *{date}* a las *{time}hs*. Le recomendamos llegar con 10 minutos de anticipación. Por favor seleccione la opcion deseada.",
             "footer_text": "Cardiología IAF",
             "reply_buttons": {
                 "button_1": "Confirmar turno",

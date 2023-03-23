@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    ports:
+      - '6500:5432'
+    environment:
+      - APP_ENV=dev
+    volumes:
+      - ./config/.env.dev:/src/app/config/.env.dev
+      - ./config/.env.prod:/src/app/config/.env.prod
+      - postgres-db:/var/lib/postgresql/data
+
+volumes:
+  postgres-db:

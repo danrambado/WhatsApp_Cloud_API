@@ -1,5 +1,5 @@
 #Python
-import json
+import json, os
 
 #FastAPI
 from fastapi import APIRouter, Request
@@ -7,6 +7,8 @@ from fastapi.responses import JSONResponse
 
 #env
 from config.config import whatsappcloudapi
+from services.webhook_utils import process_patient_response
+
 
 #Define the config parameters that will be used.
 verify_token = whatsappcloudapi.VERIFY_TOKEN
@@ -38,6 +40,18 @@ async def verify_token_webhook(request: Request):
 
 @webhook_router.post("/webhook/")
 async def handle_webhooks(request: Request):
-    print(await request.json())
     res = await request.json()
-    print(type(res))
+
+    status = process_patient_response(res)
+
+    
+
+
+
+   
+
+
+
+
+
+
