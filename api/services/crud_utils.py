@@ -41,7 +41,22 @@ def create_patient_info(db: Session, patien_info):
     return db_item
 
 
-def filter_appointments(db: Session, date: date):
+def filter_appointments(db: Session, date: date) -> List:
+    """
+    Context:
+    As each shift is a different entity, there can be 3 shifts of the same one on the same day.
+
+    This function groups the appointments of a date based on the idperson and the appointment time(time_only). 
+    Then it keeps the appointments that have the earliest time of the day and returns a list with 
+    the filtered appointments of the day.
+
+    Args:
+        db (Session): db session
+        date (date): date
+
+    Returns:
+        List: list with the filtered appointments of the day.
+    """
     subquery = (
         db.query(
             models.appointments.idpersona,
@@ -110,8 +125,48 @@ def consult_confirmations(db: Session, date):
     result = db.query(models.confirmations).filter(models.confirmations.date_only == date).all()
     return result
 
-def update_status_confirmation(db: Session, id, status):
-
-    confirmation = db.query(models.confirmations).filter(models.confirmations.persCelular == id).first()
-    confirmation.status = status
+def update_percelular_confirmation(db: Session, idpersona: int, wa_id: int):
+    result = db.query(models.confirmations).filter(models.confirmations.idpersona == idpersona).first()
+    result.persCelular = wa_id
+    db.flush()
     db.commit()
+
+def update_status_confirmation(db: Session, idpersona: int, status: str):
+    result = db.query(models.confirmations).filter(models.confirmations.idpersona == idpersona).first()
+    result.status = status
+    db.flush()
+    db.commit()
+
+def update_status_confirmation_by_wa_id(db: Session, wa_id: int, status: str):
+    result = db.query(models.confirmations).filter(models.confirmations.persCelular == wa_id).first()
+    result.status = status
+    db.flush()
+    db.commit()
+
+
+# INTERACCION TABLA FORMS       
+def read_idpersona_forms(db: Session, wa_id):
+    paciente = db.query(models.forms_send).filter(models.forms_send.persCelular == wa_id).first()
+    if paciente is None:
+        return False
+    return True
+
+def get_idpersona_and_save_to_forms_send(db: Session, wa_id):
+    # Obtener el idpersona de la tabla confirmations
+    result = db.query(models.confirmations).filter(models.confirmations.persCelular == wa_id).first()
+
+    if result:
+        idpersona = result.idpersona
+        persCelular = result.persCelular
+
+        # Guardar idpersona y persCelular en la tabla forms_send
+        form_send = models.forms_send(idpersona=idpersona, persCelular=persCelular)
+        db.add(form_send)
+        db.flush()
+        db.commit()
+
+
+
+
+
+

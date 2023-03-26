@@ -1,6 +1,7 @@
 ### Config Files ###
 api/config/
 .env
+config/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

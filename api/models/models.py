@@ -32,3 +32,9 @@ class confirmations(Base):
     time_only= Column(Time)
     persCelular = Column(BigInteger)
     status = Column(String, default="Pendiente")
+
+class forms_send(Base):
+    __tablename__ = "forms_send"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    idpersona = Column(Integer)
+    persCelular = Column(BigInteger)

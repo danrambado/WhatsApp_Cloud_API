@@ -13,26 +13,26 @@ from aioredis import Redis
 
 # env
 import services.iaf_api_utils as iaf_api_utils
-from services.redis_utils import get_redis_pool, set_token, get_token
-from services.iaf_api_utils import preproces_appoinment_data, preproces_patient_contact_info
+from services import redis_utils
+from services import iaf_api_utils
 
 get_data_iaf_router = APIRouter()
 
-async def get_and_check_token(redis: Redis = Depends(get_redis_pool)) -> str:
-    token = await get_token(redis)
+async def get_and_check_token(redis: Redis = Depends(redis_utils.get_redis_pool)) -> str:
+    token = await redis_utils.get_token(redis)
     if token is None:
         token = iaf_api_utils.authentication()
         expire = 29 * 60
-        await set_token(redis, token, expire)
+        await redis_utils.set_token(redis, token, expire)
     return token
 
-async def get_appointment_data(date: date, redis: Redis =  Depends(get_redis_pool), token: str = Depends(get_and_check_token)):
+async def get_appointment_data(date: date, redis: Redis =  Depends(redis_utils.get_redis_pool), token: str = Depends(get_and_check_token)):
     """
     Searches for shifts by date and stores them temporarily in redis with the set() method.
 
     Args:
         date (date): _description_
-        redis (Redis, optional): _description_. Defaults to Depends(get_redis_pool).
+        redis (Redis, optional): _description_. Defaults to Depends(redis_utils.get_redis_pool).
         token (str, optional): _description_. Defaults to Depends(get_and_check_token).
 
     Returns:
@@ -40,19 +40,19 @@ async def get_appointment_data(date: date, redis: Redis =  Depends(get_redis_poo
     """
     date = date.strftime("%Y-%m-%d")
     appointment_list = iaf_api_utils.get_appointment_list(date, token)
-    appointment_list = preproces_appoinment_data(appointment_list)
+    appointment_list = iaf_api_utils.preproces_appoinment_data(appointment_list)
     await redis.set("appointment_list", json.dumps(appointment_list))
     
     return {"message": "Data successfully obtained and saved to redis"}
 
-async def get_pacient_data(idpersona: int, redis: Redis = Depends(get_redis_pool)):
+async def get_pacient_data(idpersona: int, redis: Redis = Depends(redis_utils.get_redis_pool)):
     token = await get_and_check_token(redis)
     patient_info = iaf_api_utils.get_pacient_data(idpersona, token)
-    patient_info = preproces_patient_contact_info(patient_info)
+    patient_info = iaf_api_utils.preproces_patient_contact_info(patient_info)
     return patient_info
 
 
 @get_data_iaf_router.get("/get_appointment_data")
-async def get_appointment_data_enpoint(date: date, redis: Redis = Depends(get_redis_pool), token: str = Depends(get_and_check_token)):
+async def get_appointment_data_enpoint(date: date, redis: Redis = Depends(redis_utils.get_redis_pool), token: str = Depends(get_and_check_token)):
     response = await get_appointment_data(date=date,redis=redis, token=token)
     return response

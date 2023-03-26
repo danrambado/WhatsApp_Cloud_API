@@ -205,9 +205,9 @@ def preproces_patient_contact_info(patient_info):
         }
         for d in patient_info
     ]
-    # Normalize the number
-    raw_number = patient_info[0]["persCelular"]
-    normalized_number = normalize_number(str(raw_number))
-    patient_info[0]["persCelular"] = int(normalized_number)
+    # # Normalize the number
+    # raw_number = patient_info[0]["persCelular"]
+    # normalized_number = normalize_number(str(raw_number))
+    # patient_info[0]["persCelular"] = int(normalized_number)
 
     return patient_info[0]

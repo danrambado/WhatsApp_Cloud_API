@@ -3,10 +3,13 @@ import json
 from datetime import date
 import asyncio
 from contextlib import closing
+from typing import Optional
+from functools import partial, wraps
+
 
 
 # FastAPI
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 # SQLAlchemy
 from sqlalchemy.orm import Session
@@ -25,7 +28,74 @@ from services import crud_utils
 
 db_manage_router = APIRouter()
 
-            
+# Dependencies
+def with_db(func):
+    """
+    Custom decorator to inject and handle database dependency on specific functions.
+
+    This decorator is used to wrap functions that require database access. It is responsible for
+    get a Session instance from the database through the get_db function and provide it as an argument to the wrapped function.
+    as an argument to the wrapped function. It is also responsible for closing the database session once the wrapped function has been executed.
+    the wrapped function has been executed.
+
+    The decorator supports both synchronous and asynchronous functions.
+
+    Args:
+        func (Callable): The function to be wrapped that requires database access.
+
+    Returns:
+        Callable: the function wrapped with the database dependency injected and handled.
+    """
+    @wraps(func)
+    async def wrapper(*args, request: Request, **kwargs):
+        db = None
+        try:
+            db = next(get_db())
+            if asyncio.iscoroutinefunction(func):
+                result = await func(*args, db=db, **kwargs)
+            else:
+                result = func(*args, db=db, **kwargs)
+        except Exception as e:
+            if db is not None:
+                db.rollback()
+            print(f"Error: {e}")
+            raise
+        finally:
+            if db is not None:
+                db.close()
+        return result
+    return wrapper
+
+
+@with_db
+def get_confirmations(date: date, db: Session):
+    appointments = crud_utils.consult_confirmations(date=date, db=db)
+    return appointments
+
+@with_db
+def update_percelular_confirmation(db: Session, idpersona: int, wa_id: int):
+    crud_utils.update_percelular_confirmation(db,idpersona, wa_id)
+
+
+@with_db
+def update_status_confirmation(db: Session, idpersona, status):
+    crud_utils.update_status_confirmation(db, idpersona, status)
+
+@with_db
+def update_status_confirmation_by_wa_id(db: Session, wa_id, status):
+    crud_utils.update_status_confirmation_by_wa_id(db, wa_id, status)
+
+@with_db
+def check_form_send(db: Session, wa_id):
+    return crud_utils.read_idpersona_forms(db,wa_id)
+
+@with_db
+def create_form_send(db: Session, wa_id):
+    return crud_utils.get_idpersona_and_save_to_forms_send(db,wa_id)
+    
+    
+
+
 
 async def filter_and_save_appointments(date: date, db: Session = Depends(get_db)):
     """
@@ -82,9 +152,16 @@ async def load_appointment_data(redis: Redis, get_db_function):
 
         await asyncio.sleep(60)
 
+
 @db_manage_router.get('/filter_and_save_appointments')
 async def filter_and_save_appointments_endpoint(date: date, db: Session = Depends(get_db)):
-    await filter_and_save_appointments(date, db )
+    res= await filter_and_save_appointments(date, db)
+    return res
+
+
+
+
+
 
 
 # # @db_manage_router.get('/load_appointment_data')

@@ -14,28 +14,20 @@ def process_patient_response(webhook_data: Dict) -> Union[Tuple[str, str], None]
         wa_id: whatsapp id of the sender
     """
     
-    # print(webhook_data)
     entries = webhook_data.get("entry", [])
+
+    if not entries:
+        print("No se encontraron entradas en el webhook_data")
+        return None
 
     for entry in entries:
         changes = entry.get("changes", [])
 
         for change in changes:
             value = change.get("value", {})
-            statuses = value.get("statuses", [])
             messages = value.get("messages", [])
 
-            if statuses:
-                for status in statuses:
-                    wa_id = status.get("recipient_id")
-                    mensaje_status = status.get("status")
-
-                    if wa_id and mensaje_status:
-                        print(f"El mensaje {mensaje_status} a {wa_id}")
-                    else:
-                        print("No se pudo extraer la información de status o wa_id")
-            
-            elif messages:
+            if messages:
                 for message in messages:
                     button = message.get("button", {})
                     button_payload = button.get("payload")
@@ -43,8 +35,8 @@ def process_patient_response(webhook_data: Dict) -> Union[Tuple[str, str], None]
 
                     if button_payload and wa_id:
                         return button_payload, wa_id
-                        # print(f"button payload: {button_payload}, wa_id: {wa_id}")
                     else:
                         print("No se pudo extraer la información de button payload o wa_id")
             else:
                 print("No se encontraron mensajes válidos")
+    return None
