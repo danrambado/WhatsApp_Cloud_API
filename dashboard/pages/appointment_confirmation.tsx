@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Button } from 'antd';
+import { Button, DatePicker } from 'antd';
 import Sidebar from '../components/Sidebar';
 import _ from 'lodash';
+import moment from 'moment';
+import dayjs from 'dayjs';
+
 
 interface TableDataItem {
   date_only: string;
@@ -16,11 +19,17 @@ const TablePage = () => {
   const [tableData, setTableData] = useState<TableDataItem[]>([]);
   const [sortBy, setSortBy] = useState<keyof TableDataItem>('time_only');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
+
+  const handleDateChange = (date: dayjs.Dayjs | null) => {
+    setSelectedDate(date);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/get_filtered_appointments');
+        const queryParams = selectedDate ? `?date=${selectedDate.format('YYYY-MM-DD')}` : '';
+        const response = await fetch(`http://192.168.1.5:8000/get_appointments${queryParams}`);
         const data = await response.json();
         console.log('Data fetched:', data);
         setTableData(data.map((item: any) => ({
@@ -28,7 +37,7 @@ const TablePage = () => {
           time_only: item.time_only,
           last_name: item.last_name,
           first_name: item.first_name,
-          status: "Estado" // Aquí puedes asignar un valor por defecto si no vienen en la respuesta del endpoint
+          status: item.status
         })));
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -41,7 +50,7 @@ const TablePage = () => {
     }, 30000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [selectedDate]);
 
   const sortedData = _.orderBy(tableData, [sortBy], [sortOrder]);
 
@@ -62,6 +71,9 @@ const TablePage = () => {
         <Link href="/">
         <Button type="primary" className="bg-white text-iafpink">Ir al Menu</Button>
         </Link>
+        <div className="my-4">
+        <DatePicker onChange={handleDateChange} />
+        </div>
 
         <div className="bg-white p-4 rounded-md shadow-md mt-4">
           <table className="w-full">

@@ -1,6 +1,7 @@
 # Python
 import json
 from datetime import date
+import datetime
 import asyncio
 from contextlib import closing
 from typing import Optional
@@ -158,27 +159,7 @@ async def filter_and_save_appointments_endpoint(date: date, db: Session = Depend
     res= await filter_and_save_appointments(date, db)
     return res
 
-
-
-
-
-
-
-# # @db_manage_router.get('/load_appointment_data')
-# async def load_appointment_data_endpoint(redis: Redis = Depends(get_redis_pool), db: Session = Depends(get_db)):
-#     response = await load_appointment_data(redis, db)
-#     return response
-
-
-
-
-
         
-# @db_manage_router.get('/get_filtered_appointments')
-# async def get_filtered_appointments(db: Session = Depends(get_db)):
-#     return fetch_filtered_appointments(db)
-
-
-# @db_manage_router.get('/get_confirmation_by_date/{date}')
-# async def get_confirmation_by_date(db: Session = Depends(get_db), date: date = Path):
-#     return crud_utils.consult_confirmations(db, date)
+@db_manage_router.get('/get_appointments')
+async def get_appoinment_list(date: date, db: Session = Depends(get_db)):
+    return crud_utils.consult_confirmations(db, date)

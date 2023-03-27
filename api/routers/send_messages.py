@@ -105,7 +105,6 @@ async def send_simple_message(message: messages.simple_message):
     renponse: json response
     """
     # Intance the SimpleMessage class and use the method to_dict() to create the data for the http request.
-    # Intance the SimpleMessage class and use the method to_dict() to create the data for the http request.
     if isinstance(message, messages.simple_message):
         if hasattr(message, 'to') and hasattr(message, 'body'):  # Revisa si message tiene los atributos 'to' y 'body'
             data = json_templates.SimpleMessage(

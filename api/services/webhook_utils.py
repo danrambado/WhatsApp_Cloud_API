@@ -35,8 +35,5 @@ def process_patient_response(webhook_data: Dict) -> Union[Tuple[str, str], None]
 
                     if button_payload and wa_id:
                         return button_payload, wa_id
-                    else:
-                        print("No se pudo extraer la información de button payload o wa_id")
-            else:
-                print("No se encontraron mensajes válidos")
+
     return None

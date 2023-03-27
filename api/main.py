@@ -4,6 +4,8 @@ import requests
 
 #FastAPI
 from fastapi import FastAPI, Depends, Request, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+
 
 #env
 from services import redis_state
@@ -25,6 +27,20 @@ app.include_router(messages_router)
 app.include_router(webhook_router)
 app.include_router(get_data_iaf_router)
 app.include_router(db_manage_router)
+
+# CORS CONFIG
+origins = [
+    "*"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.on_event("startup")
 async def on_startup():
