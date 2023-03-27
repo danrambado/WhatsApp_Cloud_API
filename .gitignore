@@ -1,5 +1,5 @@
 ### Config Files ###
-api/config/
+# api/config/
 .env
 config/
 
